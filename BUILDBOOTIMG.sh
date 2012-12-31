@@ -1,6 +1,5 @@
 #!/bin/bash
 
-##	/home/kgfries/Android/android-toolchain-eabi/bin/arm-linux-androideabi-
     THREADS=$(expr 4 + $(grep processor /proc/cpuinfo | wc -l))
     DEFCONFIG=lk_defconfig
     ARCH="ARCH=arm"
@@ -55,7 +54,7 @@
     chmod 750 init*
     chmod 644 default* uevent* MSM*
     chmod 755 sbin
-    chmod 700 sbin/lkflash sbin/lkconfig
+    chmod 700 sbin/lkconfig
 
     $TOOLS/mkbootfs $RAMDISK | gzip > $PACK/ramdisk.gz
     $TOOLS/mkbootimg --cmdline "console=null androidboot.hardware=qcom user_debug=31" --kernel $PACK/zImage --ramdisk $PACK/ramdisk.gz --base 0x80200000 --ramdiskaddr 0x81500000 -o $PACK/boot.img
@@ -68,6 +67,6 @@
     #CWM flashable
     cp $PACK/boot.img $CWM/boot.img
     cd $CWM
-    zip -r -9 imoseyon-droidz-jb-v1.2.1.vbox.zip .
+    zip -r -9 imoseyon-droidroidz-jb-v1.4.zip .
     
 
