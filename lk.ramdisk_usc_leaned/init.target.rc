@@ -170,4 +170,4 @@ service TvoutService_C /system/bin/bintvoutservice
 
 on property:init.svc.bootanim=stopped
     start usf-post-boot
-
+    start lk-post-boot
