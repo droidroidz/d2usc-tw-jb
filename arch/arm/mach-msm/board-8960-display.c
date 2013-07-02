@@ -688,6 +688,7 @@ static int mipi_dsi_liquid_panel_power(int on)
 
 static void active_reset_ldi(void)
 {
+#if !defined(CONFIG_FB_MSM_MIPI_SAMSUNG_OLED_VIDEO_HD_PT)
 
 	int gpio43 = PM8921_GPIO_PM_TO_SYS(PMIC_GPIO_LCD_RST);
 	pr_info("Active Reset: Resettig LCD 1...0..1\n");
@@ -715,6 +716,7 @@ static void active_reset_ldi(void)
 	gpio_direction_output(gpio43, 1);
 	udelay(500);
 #endif /* CONFIG_FB_MSM_MIPI_NOVATEK_CMD_WVGA_PT_PANEL */
+#endif
 }
 
 void pull_ldi_reset_down(void)
@@ -1509,6 +1511,16 @@ static char mipi_dsi_splash_is_enabled(void)
 	return mdp_pdata.cont_splash_enabled;
 }
 
+static struct platform_device mipi_dsi_renesas_panel_device = {
+	.name = "mipi_renesas",
+	.id = 0,
+};
+
+static struct platform_device mipi_dsi_simulator_panel_device = {
+	.name = "mipi_simulator",
+	.id = 0,
+};
+
 #define LPM_CHANNEL0 0
 #if defined(CONFIG_FB_MSM_MIPI_DSI_TOSHIBA)
 static int toshiba_gpio[] = {LPM_CHANNEL0};
@@ -1918,12 +1930,20 @@ void __init msm8960_init_fb(void)
 	platform_device_register(&wfd_device);
 #endif
 
-	platform_device_register(&mipi_dsi_novatek_panel_device);
-	platform_device_register(&mipi_dsi_orise_panel_device);
+	if (machine_is_msm8960_sim())
+		platform_device_register(&mipi_dsi_simulator_panel_device);
+
+	if (machine_is_msm8960_rumi3())
+		platform_device_register(&mipi_dsi_renesas_panel_device);
+
+	if (!machine_is_msm8960_sim() && !machine_is_msm8960_rumi3()) {
+		platform_device_register(&mipi_dsi_novatek_panel_device);
+		platform_device_register(&mipi_dsi_orise_panel_device);
 
 #ifdef CONFIG_FB_MSM_HDMI_MSM_PANEL
-	platform_device_register(&hdmi_msm_device);
+		platform_device_register(&hdmi_msm_device);
 #endif
+	}
 
 	if (machine_is_msm8960_liquid() \
 			|| machine_is_ESPRESSO_VZW()
